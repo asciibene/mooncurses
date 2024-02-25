@@ -1,9 +1,11 @@
 -- TODO Make a dict of colors with their appropriate color codes
-export ANSIColorCodes={red: 31,green: 32}
+export ANSIColorCodes={ red: 31,
+                        green: 32,
+                        --
+                      
+                      }
 
-export class Terminal
-  rows: tonumber(io.popen("tput lines")\read("*a"))
-  cols: tonumber(io.popen("tput cols")\read("*a"))
+export class MoonCurse
 
   new: =>
     -- Initialize terminal state here if necessary
@@ -12,10 +14,10 @@ export class Terminal
 
   clearScreen: =>
     print "\027[2J"
-
+  
   cls=clearScreen
   
-  printAt: (x,y,str) =>
+  printAt: (y,x,str) =>
     print "\027[#{y};#{x}H"..str
 
   carriageReturn: =>
@@ -36,13 +38,14 @@ export class Terminal
   setReverse: =>
     print "\027[7m"
 
-  saveCursPos: =>
+  saveCurs: =>
     print "\027[s"
 
-  restoreCursPos: =>
+  restoreCurs: =>
     print "\027[u"
   
   setWindowTitle: (t) =>
+    if not t then return false
     print "\027[0;#{t}\7"
 
   moveCursor: (x, y) =>
@@ -54,10 +57,7 @@ export class Terminal
   setColor: (colorCode) =>
     print "\027[#{colorCode}m"
 
-  resetColor: =>
-    print "\027[0m"
-
-  resetFormat:=>
+  reset: =>
     print "\027[0m"
   
   get_terminal_size: =>
@@ -66,8 +66,7 @@ export class Terminal
     return @rows, @cols
 
   read_key: =>
-    -- TODO Make non-blocking XXX but also make a blocking version
-    if @rows=nil then @rows = tonumber(io.popen("tput lines")\read("*a"))
+    if @rows==nil then @rows = tonumber(io.popen("tput lines")\read("*a"))
     @moveCursor(0,@rows-1)
     io.stdout\setvbuf("line",1)
     io.stdin\setvbuf("line",1)
